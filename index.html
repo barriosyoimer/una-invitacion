@@ -246,7 +246,7 @@
   #confetti{
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: 70;
     pointer-events: none;
   }
 
@@ -820,10 +820,23 @@
     }
   }
 
+  var noTapCount = 0; // cuenta los toques reales sobre "No"
+  var lastTapAt = 0;
+
   function dodge(e){
     if (paused()) return;
-    engaged = true; // a partir del primer toque real, se activan el acecho y el deambular
+    var now = performance.now();
+    if (now - lastTapAt < 150) return; // evita contar el mismo toque dos veces
+    lastTapAt = now;
+
     if (e && e.cancelable) e.preventDefault();
+    noTapCount++;
+    engaged = true; // a partir del primer toque real, se activa el deambular ambiental
+
+    if (noTapCount === 1){
+      return; // el primer toque no hace nada: el botón se queda quieto
+    }
+
     activateFixed();
     if (reduceMotion){
       place();
@@ -839,39 +852,13 @@
   }
 
   btnNo.addEventListener('pointerdown', dodge, { passive: false });
-  btnNo.addEventListener('touchstart', dodge, { passive: false });
-  btnNo.addEventListener('click', dodge);
-  btnNo.addEventListener('mouseenter', dodge);
   window.addEventListener('resize', function(){ if (isFixed && !paused()) place(); });
 
-  /* ---------- Huye cuando el dedo/cursor se acerca (sin llegar a tocarlo) ---------- */
-  var FLEE_RADIUS = window.innerWidth < 480 ? 90 : 120;
-  var lastFleeAt = 0;
-  var FLEE_COOLDOWN = 280; // ms, evita disparos repetidos por el mismo gesto
-
-  function maybeFleeFromPoint(px, py){
-    if (paused() || !engaged) return;
-    var now = performance.now();
-    if (now - lastFleeAt < FLEE_COOLDOWN) return;
-    var r = btnNo.getBoundingClientRect();
-    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    if (Math.hypot(px - cx, py - cy) < FLEE_RADIUS){
-      lastFleeAt = now;
-      activateFixed();
-      place();
-      bump();
-    }
-  }
-
-  document.addEventListener('pointermove', function(e){
-    maybeFleeFromPoint(e.clientX, e.clientY);
-  }, { passive: true });
-
-  /* ---------- Deambula solo cada pocos segundos, aunque no lo toquen ---------- */
+  /* ---------- Deambula solo cada pocos segundos, aunque no lo toquen (después del 1er intento) ---------- */
   function scheduleWander(){
     var delay = 2800 + Math.random() * 2400;
     setTimeout(function(){
-      if (engaged && !paused() && performance.now() - lastFleeAt > 900){ // no interrumpe una persecución activa
+      if (engaged && !paused()){
         activateFixed();
         place();
       }
@@ -898,6 +885,7 @@
     missCount = 0;
     confirmShown = false;
     engaged = false;
+    noTapCount = 0;
     btnSi.style.setProperty('--grow', '1');
     btnNo.style.setProperty('--shrink', '1');
     missMsg.textContent = ' ';
