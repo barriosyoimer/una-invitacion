@@ -875,7 +875,6 @@
     accepted = true;
     questionView.hidden = true;
     successView.hidden = false;
-    launchConfetti();
   });
 
   /* ---------- Modal de confirmación (aparece al 3er intento de decir "No") ---------- */
@@ -900,7 +899,6 @@
       accepted = true;
       questionView.hidden = true;
       confirmYesOverlay.hidden = false;
-      launchConfetti();
     }, reduceMotion ? 250 : TREE_LEAF_DURATION_MS);
   });
 
