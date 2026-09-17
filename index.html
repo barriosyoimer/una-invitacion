@@ -317,6 +317,18 @@
   .msg-step{ animation: stepIn .5s cubic-bezier(.2,.8,.2,1) both; }
   @keyframes stepIn{ from{ opacity: 0; transform: translateY(10px); } to{ opacity: 1; transform: translateY(0); } }
 
+  .tree-overlay{ flex-direction: column; gap: 18px; }
+  .tree-caption{
+    margin: 0;
+    color: var(--text);
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    text-wrap: balance;
+    animation: stepIn .5s cubic-bezier(.2,.8,.2,1) .2s both;
+  }
+
   /* ---------- Árbol floreciendo ---------- */
   .tree-scene{
     position: relative;
@@ -385,128 +397,15 @@
   }
   @keyframes popLeaf{ to{ transform: translate(-50%,-50%) scale(1) rotate(var(--rot, 0deg)); opacity: 1; } }
 
-  /* ---------- Intro: sobre con la carta ---------- */
-  .intro-overlay{
-    z-index: 100;
-    background: var(--bg);
-    flex-direction: column;
-    gap: 26px;
-    transition: opacity .6s ease;
-  }
-  .intro-overlay::before{
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      radial-gradient(34vmax 34vmax at 18% 12%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 60%),
-      radial-gradient(38vmax 38vmax at 88% 20%, color-mix(in srgb, var(--accent-3) 20%, transparent), transparent 60%);
-  }
-  .intro-overlay.intro-hide{ opacity: 0; pointer-events: none; }
-
-  .envelope{
-    position: relative;
-    width: 230px;
-    height: 152px;
-    cursor: pointer;
-    animation: envIn .7s cubic-bezier(.2,.8,.2,1) both;
-  }
-  @keyframes envIn{ from{ opacity: 0; transform: translateY(18px) scale(.94); } to{ opacity: 1; transform: translateY(0) scale(1); } }
-
-  .env-body{
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(160deg, var(--surface), var(--bg-2));
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    box-shadow: 0 24px 50px -18px var(--shadow);
-    z-index: 2;
-  }
-  .env-flap{
-    position: absolute;
-    top: 0; left: 0;
-    width: 0; height: 0;
-    border-left: 115px solid transparent;
-    border-right: 115px solid transparent;
-    border-top: 96px solid var(--accent);
-    transform-origin: top center;
-    transition: transform .85s cubic-bezier(.5,0,.2,1);
-    filter: drop-shadow(0 8px 12px var(--shadow));
-    z-index: 3;
-  }
-  .envelope.open .env-flap{ transform: rotateX(178deg); }
-
-  .env-seal{
-    position: absolute;
-    top: 30px; left: 50%;
-    transform: translateX(-50%);
-    font-size: 26px;
-    z-index: 4;
-    transition: opacity .3s ease, transform .3s ease;
-  }
-  .envelope.open .env-seal{ opacity: 0; transform: translateX(-50%) translateY(-8px) scale(.6); }
-
-  .env-letter{
-    position: absolute;
-    left: 9%; right: 9%; top: 12%;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 18px 10px;
-    text-align: center;
-    box-shadow: 0 10px 24px -10px var(--shadow);
-    transform: translateY(4%);
-    opacity: 0;
-    z-index: 1;
-    transition: transform .7s cubic-bezier(.34,1.15,.4,1) .35s, opacity .5s ease .35s;
-  }
-  .envelope.open .env-letter{ transform: translateY(-60%); opacity: 1; z-index: 4; }
-
-  .env-to{
-    margin: 0;
-    font-size: 12px;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--text-soft);
-    font-weight: 700;
-  }
-  .env-name{
-    margin: 5px 0 0;
-    font-family: "Fredoka", sans-serif;
-    font-size: 27px;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  .env-tease{
-    margin: 0;
-    color: var(--accent);
-    font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 15.5px;
-    font-weight: 700;
-    text-align: center;
-    text-wrap: balance;
-    transition: opacity .3s ease;
-  }
-  .env-hint{
-    color: var(--text-soft);
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    animation: hintPulse 1.8s ease-in-out infinite;
-    transition: opacity .3s ease;
-  }
-  @keyframes hintPulse{ 0%, 100%{ opacity: .6; } 50%{ opacity: 1; } }
-
   @media (prefers-reduced-motion: reduce){
     .aurora, .floaters span, .badge, .btn-si{ animation: none !important; }
     .card{ animation: none !important; }
     .btn-no{ transition: none !important; }
     .overlay{ animation: none !important; }
     .msg-step{ animation: none !important; }
+    .tree-caption{ animation: none !important; }
     .tree-glow{ animation: none !important; }
     .btn-attention{ animation: none !important; }
-    .env-hint{ animation: none !important; }
-    .envelope, .env-flap, .env-letter, .env-seal, .intro-overlay{ transition: none !important; animation: none !important; }
     .trunk, .branch, .leaf{ animation: none !important; opacity: 1 !important; }
     .trunk{ transform: translateX(-50%) scaleY(1) !important; }
     .br1{ transform: rotate(-30deg) scale(1) !important; }
@@ -519,20 +418,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
-
-<div class="overlay intro-overlay" id="introOverlay">
-  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Abrir invitación">
-    <div class="env-letter">
-      <p class="env-to">Para la Señorita</p>
-      <p class="env-name">NOHELI</p>
-    </div>
-    <div class="env-body"></div>
-    <div class="env-flap"></div>
-    <span class="env-seal" aria-hidden="true">💌</span>
-  </div>
-  <p class="env-tease">Si eres sifrina y no comes sardinas… 😏</p>
-  <p class="env-hint" id="envHint">Toca el sobre para abrir tu invitación</p>
-</div>
 
 <div class="aurora" aria-hidden="true"></div>
 <div class="floaters" aria-hidden="true" id="floaters"></div>
@@ -587,7 +472,7 @@
   </div>
 </div>
 
-<div class="overlay" id="treeOverlay" hidden>
+<div class="overlay tree-overlay" id="treeOverlay" hidden>
   <div class="tree-scene" id="treeScene" aria-hidden="true">
     <div class="tree-glow"></div>
     <div class="trunk"></div>
@@ -596,6 +481,7 @@
     <div class="branch br3"></div>
     <div class="branch br4"></div>
   </div>
+  <p class="tree-caption">Soldado caído… diste lo mejor de ti 🫡</p>
 </div>
 
 <div class="overlay" id="confirmYesOverlay" hidden>
@@ -642,37 +528,6 @@
       floatersEl.appendChild(s);
     }
   }
-
-  /* ---------- Intro: abrir el sobre ---------- */
-  (function(){
-    var introOverlayEl = document.getElementById('introOverlay');
-    var envelopeEl = document.getElementById('envelope');
-    var envHintEl = document.getElementById('envHint');
-    var envTeaseEl = document.querySelector('.env-tease');
-    var opened = false;
-
-    function openEnvelope(){
-      if (opened) return;
-      opened = true;
-      envelopeEl.classList.add('open');
-      envHintEl.style.opacity = '0';
-      if (envTeaseEl) envTeaseEl.style.opacity = '0';
-      var waitOpen = reduceMotion ? 150 : 1250;
-      setTimeout(function(){
-        introOverlayEl.classList.add('intro-hide');
-        var waitFade = reduceMotion ? 0 : 650;
-        setTimeout(function(){ introOverlayEl.hidden = true; }, waitFade);
-      }, waitOpen);
-    }
-
-    envelopeEl.addEventListener('click', openEnvelope);
-    envelopeEl.addEventListener('keydown', function(e){
-      if (e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
-        openEnvelope();
-      }
-    });
-  })();
 
   /* ---------- Árbol floreciendo: genera las flores con forma de copa ---------- */
   var TREE_LEAF_DURATION_MS = (function(){
@@ -741,12 +596,11 @@
   var confirmModal = document.getElementById('confirmModal');
   var treeOverlay = document.getElementById('treeOverlay');
   var confirmYesOverlay = document.getElementById('confirmYesOverlay');
-  var introOverlay = document.getElementById('introOverlay');
   var modalYes = document.getElementById('modalYes');
   var modalNo = document.getElementById('modalNo');
 
   function paused(){
-    return accepted || !introOverlay.hidden || !confirmModal.hidden || !treeOverlay.hidden || !confirmYesOverlay.hidden;
+    return accepted || !confirmModal.hidden || !treeOverlay.hidden || !confirmYesOverlay.hidden;
   }
 
   function getBounds(){
@@ -890,23 +744,10 @@
     missMsg.textContent = ' ';
   });
 
-  /* ---------- Chiste: "responso" hablado para el botón "No" caído en combate ---------- */
-  function speakSoldadoCaido(){
-    try {
-      if (!window.speechSynthesis) return;
-      var frase = new SpeechSynthesisUtterance('Soldado caído... diste lo mejor de ti.');
-      frase.lang = 'es-ES';
-      frase.rate = 0.92;
-      frase.pitch = 0.75;
-      window.speechSynthesis.speak(frase);
-    } catch (e) { /* si el navegador no soporta voz, no pasa nada */ }
-  }
-
   modalYes.addEventListener('click', function(){
     // Confirma que quería decir que no -> crece el árbol y luego el mensaje final
     confirmModal.hidden = true;
     treeOverlay.hidden = false;
-    speakSoldadoCaido();
     setTimeout(function(){
       treeOverlay.hidden = true;
       accepted = true;
