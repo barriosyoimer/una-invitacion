@@ -890,10 +890,23 @@
     missMsg.textContent = ' ';
   });
 
+  /* ---------- Chiste: "responso" hablado para el botón "No" caído en combate ---------- */
+  function speakSoldadoCaido(){
+    try {
+      if (!window.speechSynthesis) return;
+      var frase = new SpeechSynthesisUtterance('Soldado caído... diste lo mejor de ti.');
+      frase.lang = 'es-ES';
+      frase.rate = 0.92;
+      frase.pitch = 0.75;
+      window.speechSynthesis.speak(frase);
+    } catch (e) { /* si el navegador no soporta voz, no pasa nada */ }
+  }
+
   modalYes.addEventListener('click', function(){
     // Confirma que quería decir que no -> crece el árbol y luego el mensaje final
     confirmModal.hidden = true;
     treeOverlay.hidden = false;
+    speakSoldadoCaido();
     setTimeout(function(){
       treeOverlay.hidden = true;
       accepted = true;
