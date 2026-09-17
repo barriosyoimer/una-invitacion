@@ -1,0 +1,1014 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} body{margin:0}</style>
+</head>
+<body>
+<title>¿Salimos?</title>
+<style>
+  :root{
+    --bg: #fff4ec;
+    --bg-2: #ffe9e0;
+    --surface: #ffffff;
+    --text: #2c1338;
+    --text-soft: #7a5b7e;
+    --accent: #ff4f81;
+    --accent-ink: #ffffff;
+    --accent-2: #ffb238;
+    --accent-3: #6c4cff;
+    --line: rgba(44,19,56,0.12);
+    --shadow: rgba(44,19,56,0.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #190f22;
+      --bg-2: #241531;
+      --surface: #2a1832;
+      --text: #fbeffa;
+      --text-soft: #c9a9cc;
+      --accent: #ff6f9e;
+      --accent-ink: #241531;
+      --accent-2: #ffc267;
+      --accent-3: #a58bff;
+      --line: rgba(255,255,255,0.14);
+      --shadow: rgba(0,0,0,0.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #190f22;
+    --bg-2: #241531;
+    --surface: #2a1832;
+    --text: #fbeffa;
+    --text-soft: #c9a9cc;
+    --accent: #ff6f9e;
+    --accent-ink: #241531;
+    --accent-2: #ffc267;
+    --accent-3: #a58bff;
+    --line: rgba(255,255,255,0.14);
+    --shadow: rgba(0,0,0,0.45);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 20px;
+    padding-block: 28px;
+    position: relative;
+    overflow-x: hidden;
+    isolation: isolate;
+  }
+
+  h1, h2{ font-family: "Fredoka", "Nunito", sans-serif; text-wrap: balance; margin: 0; }
+
+  /* ---------- Ambient aurora background ---------- */
+  .aurora{
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(38vmax 38vmax at 12% 10%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 60%),
+      radial-gradient(42vmax 42vmax at 90% 15%, color-mix(in srgb, var(--accent-3) 26%, transparent), transparent 60%),
+      radial-gradient(46vmax 46vmax at 50% 100%, color-mix(in srgb, var(--accent-2) 26%, transparent), transparent 65%),
+      var(--bg);
+    animation: drift 22s ease-in-out infinite alternate;
+  }
+  @keyframes drift{
+    0%   { filter: hue-rotate(0deg) saturate(1); }
+    100% { filter: hue-rotate(-14deg) saturate(1.15); }
+  }
+
+  .floaters{ position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .floaters span{
+    position: absolute;
+    bottom: -10%;
+    font-size: var(--fs, 22px);
+    left: var(--x, 50%);
+    opacity: .55;
+    animation: rise var(--dur, 14s) linear infinite;
+    animation-delay: var(--delay, 0s);
+    filter: drop-shadow(0 2px 6px var(--shadow));
+  }
+  @keyframes rise{
+    0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .6; }
+    50%  { transform: translateY(-55vh) translateX(6vw) rotate(12deg); }
+    90%  { opacity: .5; }
+    100% { transform: translateY(-115vh) translateX(-4vw) rotate(-10deg); opacity: 0; }
+  }
+
+  /* ---------- Card ---------- */
+  .stage{ width: 100%; max-width: 420px; position: relative; }
+
+  .card{
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    border: 1px solid var(--line);
+    border-radius: 28px;
+    padding: 34px 26px 30px;
+    box-shadow: 0 24px 60px -20px var(--shadow), 0 2px 8px var(--shadow);
+    text-align: center;
+    animation: cardIn .7s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes cardIn{
+    from{ opacity: 0; transform: translateY(18px) scale(.96); }
+    to{ opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .badge{
+    font-size: 42px;
+    display: inline-block;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0) rotate(-4deg); }
+    50%{ transform: translateY(-8px) rotate(4deg); }
+  }
+
+  h1.title{
+    font-size: clamp(24px, 6.5vw, 30px);
+    font-weight: 600;
+    line-height: 1.25;
+    margin-top: 14px;
+    background: linear-gradient(100deg, var(--text), var(--accent) 60%, var(--text));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle{
+    margin-top: 10px;
+    color: var(--text-soft);
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+
+  .sr-note{
+    position: static;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    opacity: .8;
+  }
+
+  .actions{
+    margin-top: 26px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 56px;
+  }
+
+  .btn{
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: .2px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn-si{
+    background: linear-gradient(135deg, var(--accent), var(--accent-3));
+    color: var(--accent-ink);
+    font-size: 17px;
+    padding: 16px 30px;
+    box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--accent) 65%, transparent);
+    transform: scale(var(--grow, 1));
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .btn-si:active{ transform: scale(calc(var(--grow, 1) * .95)); }
+  @keyframes pulse{
+    0%,100%{ box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--accent) 65%, transparent); }
+    50%{ box-shadow: 0 14px 34px -6px color-mix(in srgb, var(--accent) 85%, transparent); }
+  }
+
+  .btn-no{
+    background: var(--surface);
+    color: var(--text-soft);
+    font-size: 15px;
+    padding: 14px 22px;
+    border: 1px solid var(--line);
+    position: relative;
+    left: 0; top: 0;
+    transform: scale(var(--shrink, 1));
+    transition: left .38s cubic-bezier(.34,1.56,.64,1),
+                top .38s cubic-bezier(.34,1.56,.64,1),
+                transform .25s ease;
+    z-index: 5;
+    margin: 0;
+  }
+
+  .miss-msg{
+    margin-top: 16px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--accent-3);
+    min-height: 18px;
+  }
+  .miss-msg.pop{ animation: pop .4s ease; }
+  @keyframes pop{
+    0%{ transform: scale(.85); opacity: .3; }
+    60%{ transform: scale(1.08); }
+    100%{ transform: scale(1); opacity: 1; }
+  }
+
+  /* ---------- Success view ---------- */
+  .success h2{
+    font-size: clamp(26px, 7vw, 34px);
+    font-weight: 700;
+  }
+  .success .subtitle{ margin-top: 12px; }
+  .success .badge{ animation: spinPop 1s ease; }
+  @keyframes spinPop{
+    0%{ transform: scale(.4) rotate(-30deg); opacity: 0; }
+    70%{ transform: scale(1.15) rotate(8deg); opacity: 1; }
+    100%{ transform: scale(1) rotate(0); }
+  }
+
+  [hidden]{ display: none !important; }
+
+  #confetti{
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  /* ---------- Overlays: confirmación / árbol / mensaje final ---------- */
+  .overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: color-mix(in srgb, var(--bg) 55%, black 18%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: overlayIn .35s ease both;
+  }
+  @keyframes overlayIn{ from{ opacity: 0; } to{ opacity: 1; } }
+
+  .overlay-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 30px 24px;
+    max-width: 340px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 60px -20px var(--shadow);
+    animation: cardIn .45s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .overlay-text{
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 22px;
+    color: var(--text);
+    text-wrap: balance;
+  }
+  .overlay-actions{ display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-outline{
+    background: transparent;
+    color: var(--text-soft);
+    border: 1.5px solid var(--line);
+    font-size: 15px;
+    padding: 14px 24px;
+  }
+  .btn-outline:active{ background: var(--bg-2); }
+
+  .punch{ font-weight: 800; color: var(--text); font-size: 17px; }
+
+  .btn-more{ margin-top: 18px; }
+
+  .btn-attention{
+    border: 2px solid var(--accent);
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    color: var(--accent);
+    font-weight: 800;
+    animation: attentionBounce 1.3s ease-in-out infinite;
+  }
+  @keyframes attentionBounce{
+    0%, 100%{ transform: translateY(0) rotate(0deg) scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent); }
+    25%{ transform: translateY(-7px) rotate(-3deg) scale(1.07); }
+    50%{ transform: translateY(-2px) rotate(0deg) scale(1.09); box-shadow: 0 0 20px 6px color-mix(in srgb, var(--accent) 35%, transparent); }
+    75%{ transform: translateY(-7px) rotate(3deg) scale(1.07); }
+  }
+
+  .msg-step{ animation: stepIn .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes stepIn{ from{ opacity: 0; transform: translateY(10px); } to{ opacity: 1; transform: translateY(0); } }
+
+  /* ---------- Árbol floreciendo ---------- */
+  .tree-scene{
+    position: relative;
+    width: min(80vw, 300px);
+    height: min(80vw, 300px);
+  }
+  .tree-glow{
+    position: absolute;
+    left: 50%; top: 56%;
+    width: 78%; height: 78%;
+    transform: translate(-50%,-50%) scale(.9);
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 38%, transparent), transparent 70%);
+    filter: blur(10px);
+    animation: glowPulse 2.8s ease-in-out infinite;
+    z-index: 0;
+  }
+  @keyframes glowPulse{
+    0%,100%{ opacity: .45; transform: translate(-50%,-50%) scale(.88); }
+    50%{ opacity: .8; transform: translate(-50%,-50%) scale(1.06); }
+  }
+  .trunk{
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 20px;
+    height: 42%;
+    background: linear-gradient(180deg, #b9835a, #6b4429);
+    border-radius: 10px 10px 2px 2px;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: bottom center;
+    animation: growTrunk .38s cubic-bezier(.22,.9,.3,1) forwards;
+    z-index: 1;
+  }
+  @keyframes growTrunk{ to{ transform: translateX(-50%) scaleY(1); } }
+
+  .branch{
+    position: absolute;
+    left: 50%;
+    width: 52px;
+    height: 9px;
+    background: linear-gradient(90deg, #b9835a, #6b4429);
+    border-radius: 8px;
+    opacity: 0;
+    z-index: 1;
+  }
+  .br1{ bottom: 24%; margin-left: -52px; transform-origin: right center; animation: popBr1 .5s cubic-bezier(.34,1.56,.64,1) .3s forwards; }
+  .br2{ bottom: 31%; transform-origin: left center;  animation: popBr2 .5s cubic-bezier(.34,1.56,.64,1) .42s forwards; }
+  .br3{ bottom: 37%; margin-left: -52px; transform-origin: right center; animation: popBr3 .5s cubic-bezier(.34,1.56,.64,1) .54s forwards; }
+  .br4{ bottom: 44%; transform-origin: left center;  animation: popBr4 .5s cubic-bezier(.34,1.56,.64,1) .66s forwards; }
+
+  @keyframes popBr1{ from{ opacity: 0; transform: rotate(-30deg) scale(.3); } to{ opacity: 1; transform: rotate(-30deg) scale(1); } }
+  @keyframes popBr2{ from{ opacity: 0; transform: rotate(30deg) scale(.3); }  to{ opacity: 1; transform: rotate(30deg) scale(1); } }
+  @keyframes popBr3{ from{ opacity: 0; transform: rotate(-15deg) scale(.3); } to{ opacity: 1; transform: rotate(-15deg) scale(1); } }
+  @keyframes popBr4{ from{ opacity: 0; transform: rotate(15deg) scale(.3); }  to{ opacity: 1; transform: rotate(15deg) scale(1); } }
+
+  .leaf{
+    position: absolute;
+    transform: translate(-50%,-50%) scale(0) rotate(0deg);
+    opacity: 0;
+    animation-name: popLeaf;
+    animation-duration: .6s;
+    animation-timing-function: cubic-bezier(.34,1.56,.64,1);
+    animation-fill-mode: forwards;
+    filter: drop-shadow(0 3px 5px var(--shadow));
+    z-index: 2;
+  }
+  @keyframes popLeaf{ to{ transform: translate(-50%,-50%) scale(1) rotate(var(--rot, 0deg)); opacity: 1; } }
+
+  /* ---------- Intro: sobre con la carta ---------- */
+  .intro-overlay{
+    z-index: 100;
+    background: var(--bg);
+    flex-direction: column;
+    gap: 26px;
+    transition: opacity .6s ease;
+  }
+  .intro-overlay::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(34vmax 34vmax at 18% 12%, color-mix(in srgb, var(--accent) 24%, transparent), transparent 60%),
+      radial-gradient(38vmax 38vmax at 88% 20%, color-mix(in srgb, var(--accent-3) 20%, transparent), transparent 60%);
+  }
+  .intro-overlay.intro-hide{ opacity: 0; pointer-events: none; }
+
+  .envelope{
+    position: relative;
+    width: 230px;
+    height: 152px;
+    cursor: pointer;
+    animation: envIn .7s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes envIn{ from{ opacity: 0; transform: translateY(18px) scale(.94); } to{ opacity: 1; transform: translateY(0) scale(1); } }
+
+  .env-body{
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, var(--surface), var(--bg-2));
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 24px 50px -18px var(--shadow);
+    z-index: 2;
+  }
+  .env-flap{
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 0;
+    border-left: 115px solid transparent;
+    border-right: 115px solid transparent;
+    border-top: 96px solid var(--accent);
+    transform-origin: top center;
+    transition: transform .85s cubic-bezier(.5,0,.2,1);
+    filter: drop-shadow(0 8px 12px var(--shadow));
+    z-index: 3;
+  }
+  .envelope.open .env-flap{ transform: rotateX(178deg); }
+
+  .env-seal{
+    position: absolute;
+    top: 30px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    z-index: 4;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .envelope.open .env-seal{ opacity: 0; transform: translateX(-50%) translateY(-8px) scale(.6); }
+
+  .env-letter{
+    position: absolute;
+    left: 9%; right: 9%; top: 12%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 10px;
+    text-align: center;
+    box-shadow: 0 10px 24px -10px var(--shadow);
+    transform: translateY(4%);
+    opacity: 0;
+    z-index: 1;
+    transition: transform .7s cubic-bezier(.34,1.15,.4,1) .35s, opacity .5s ease .35s;
+  }
+  .envelope.open .env-letter{ transform: translateY(-60%); opacity: 1; z-index: 4; }
+
+  .env-to{
+    margin: 0;
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    font-weight: 700;
+  }
+  .env-name{
+    margin: 5px 0 0;
+    font-family: "Fredoka", sans-serif;
+    font-size: 27px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .env-tease{
+    margin: 0;
+    color: var(--accent);
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    text-align: center;
+    text-wrap: balance;
+    transition: opacity .3s ease;
+  }
+  .env-hint{
+    color: var(--text-soft);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    animation: hintPulse 1.8s ease-in-out infinite;
+    transition: opacity .3s ease;
+  }
+  @keyframes hintPulse{ 0%, 100%{ opacity: .6; } 50%{ opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce){
+    .aurora, .floaters span, .badge, .btn-si{ animation: none !important; }
+    .card{ animation: none !important; }
+    .btn-no{ transition: none !important; }
+    .overlay{ animation: none !important; }
+    .msg-step{ animation: none !important; }
+    .tree-glow{ animation: none !important; }
+    .btn-attention{ animation: none !important; }
+    .env-hint{ animation: none !important; }
+    .envelope, .env-flap, .env-letter, .env-seal, .intro-overlay{ transition: none !important; animation: none !important; }
+    .trunk, .branch, .leaf{ animation: none !important; opacity: 1 !important; }
+    .trunk{ transform: translateX(-50%) scaleY(1) !important; }
+    .br1{ transform: rotate(-30deg) scale(1) !important; }
+    .br2{ transform: rotate(30deg) scale(1) !important; }
+    .br3{ transform: rotate(-15deg) scale(1) !important; }
+    .br4{ transform: rotate(15deg) scale(1) !important; }
+    .leaf{ transform: translate(-50%,-50%) scale(1) rotate(var(--rot, 0deg)) !important; }
+  }
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+
+<div class="overlay intro-overlay" id="introOverlay">
+  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Abrir invitación">
+    <div class="env-letter">
+      <p class="env-to">Para la Señorita</p>
+      <p class="env-name">NOHELI</p>
+    </div>
+    <div class="env-body"></div>
+    <div class="env-flap"></div>
+    <span class="env-seal" aria-hidden="true">💌</span>
+  </div>
+  <p class="env-tease">Si eres sifrina y no comes sardinas… 😏</p>
+  <p class="env-hint" id="envHint">Toca el sobre para abrir tu invitación</p>
+</div>
+
+<div class="aurora" aria-hidden="true"></div>
+<div class="floaters" aria-hidden="true" id="floaters"></div>
+
+<main class="stage">
+  <section class="card" id="card">
+
+    <div id="questionView">
+      <span class="badge" aria-hidden="true">💐</span>
+      <h1 class="title">¿Te animas a salir conmigo?</h1>
+      <p class="subtitle">Prometo buena compañía, buena música y cero planes aburridos.</p>
+
+      <div class="actions">
+        <button type="button" class="btn btn-si" id="btnSi">¡Sí, obvio! 🎉</button>
+        <button type="button" class="btn btn-no" id="btnNo" aria-hidden="true" tabindex="-1">No</button>
+      </div>
+
+      <p class="miss-msg" id="missMsg" aria-hidden="true">&nbsp;</p>
+      <p class="sr-note">Psst… esta invitación solo tiene una respuesta válida 💕</p>
+    </div>
+
+    <div id="successView" hidden class="success">
+      <div id="successStep1">
+        <span class="badge" aria-hidden="true">🎉</span>
+        <h2>¡Genial!</h2>
+        <p class="subtitle">Ya sabía que ibas a decir que sí 💕<br>Pronto te escribo con la hora y el lugar.</p>
+        <button type="button" class="btn btn-outline btn-more btn-attention" id="btnSuccessMore">Ver otro mensaje 👀</button>
+      </div>
+      <div id="successStep2" hidden class="msg-step">
+        <span class="badge" aria-hidden="true">🎉</span>
+        <h2>¡Felicitaciones por tu nuevo cargo!</h2>
+        <button type="button" class="btn btn-si btn-more" id="btnSuccessNext">Siguiente</button>
+      </div>
+      <div id="successStep3" hidden class="msg-step">
+        <span class="badge" aria-hidden="true">🤳</span>
+        <h2>Aviso importante</h2>
+        <p class="subtitle">La cámara frontal se activó y se logró registrar 2 sonrisas mientras usabas la página…</p>
+        <p class="subtitle punch">Y el acuerdo era claro: si te reías, era un sí. 😏💕</p>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<div class="overlay" id="confirmModal" hidden>
+  <div class="overlay-card">
+    <p class="overlay-text">¿Segura que quieres decir que no?</p>
+    <div class="overlay-actions">
+      <button type="button" class="btn btn-si" id="modalYes">Sí</button>
+      <button type="button" class="btn btn-outline" id="modalNo">No</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="treeOverlay" hidden>
+  <div class="tree-scene" id="treeScene" aria-hidden="true">
+    <div class="tree-glow"></div>
+    <div class="trunk"></div>
+    <div class="branch br1"></div>
+    <div class="branch br2"></div>
+    <div class="branch br3"></div>
+    <div class="branch br4"></div>
+  </div>
+</div>
+
+<div class="overlay" id="confirmYesOverlay" hidden>
+  <section class="card success">
+    <div id="yesStep1">
+      <span class="badge" aria-hidden="true">💘</span>
+      <h2>Tu respuesta es…</h2>
+      <p class="subtitle punch">¡NO puedo resistirme a esa salida contigo, mi amor! 💕</p>
+      <button type="button" class="btn btn-outline btn-more btn-attention" id="btnStep2">Ver otro mensaje 👀</button>
+    </div>
+    <div id="yesStep2" hidden class="msg-step">
+      <span class="badge" aria-hidden="true">🎉</span>
+      <h2>¡Felicitaciones por tu nuevo cargo!</h2>
+      <button type="button" class="btn btn-si btn-more" id="btnStep3">Siguiente</button>
+    </div>
+    <div id="yesStep3" hidden class="msg-step">
+      <span class="badge" aria-hidden="true">🤳</span>
+      <h2>Aviso importante</h2>
+      <p class="subtitle">La cámara frontal se activó y se logró registrar 2 sonrisas mientras usabas la página…</p>
+      <p class="subtitle punch">Y el acuerdo era claro: si te reías, era un sí. 😏💕</p>
+    </div>
+  </section>
+</div>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Ambient floating hearts ---------- */
+  var floatersEl = document.getElementById('floaters');
+  if (!reduceMotion && floatersEl){
+    var glyphs = ['🌸','✨','💫','🌺'];
+    var count = window.innerWidth < 480 ? 8 : 12;
+    for (var i = 0; i < count; i++){
+      var s = document.createElement('span');
+      s.textContent = glyphs[i % glyphs.length];
+      s.style.setProperty('--x', (Math.random()*94 + 3) + '%');
+      s.style.setProperty('--fs', (14 + Math.random()*20) + 'px');
+      s.style.setProperty('--dur', (11 + Math.random()*10) + 's');
+      s.style.setProperty('--delay', (Math.random()*-18) + 's');
+      floatersEl.appendChild(s);
+    }
+  }
+
+  /* ---------- Intro: abrir el sobre ---------- */
+  (function(){
+    var introOverlayEl = document.getElementById('introOverlay');
+    var envelopeEl = document.getElementById('envelope');
+    var envHintEl = document.getElementById('envHint');
+    var envTeaseEl = document.querySelector('.env-tease');
+    var opened = false;
+
+    function openEnvelope(){
+      if (opened) return;
+      opened = true;
+      envelopeEl.classList.add('open');
+      envHintEl.style.opacity = '0';
+      if (envTeaseEl) envTeaseEl.style.opacity = '0';
+      var waitOpen = reduceMotion ? 150 : 1250;
+      setTimeout(function(){
+        introOverlayEl.classList.add('intro-hide');
+        var waitFade = reduceMotion ? 0 : 650;
+        setTimeout(function(){ introOverlayEl.hidden = true; }, waitFade);
+      }, waitOpen);
+    }
+
+    envelopeEl.addEventListener('click', openEnvelope);
+    envelopeEl.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openEnvelope();
+      }
+    });
+  })();
+
+  /* ---------- Árbol floreciendo: genera las flores con forma de copa ---------- */
+  var TREE_LEAF_DURATION_MS = (function(){
+    var scene = document.getElementById('treeScene');
+    if (!scene) return 2200;
+    var petals = ['🌸','🌸','🌸','🌸','🌺','💮'];
+    var leafCount = window.innerWidth < 480 ? 20 : 26;
+    var baseDelay = 0.85;      // arranca justo cuando las ramas ya casi terminaron
+    var step = 0.09;           // separación entre flores -> la copa se toma su tiempo
+    var lastDelay = baseDelay;
+
+    // Centro y radios de la copa (en % del contenedor). cy/ry se calculan para que
+    // el borde inferior de la copa se solape con las puntas de las ramas, no flote encima.
+    var cx = 50, cy = 37, rx = 34, ry = 29;
+
+    for (var i = 0; i < leafCount; i++){
+      var leaf = document.createElement('span');
+      leaf.className = 'leaf';
+      leaf.setAttribute('aria-hidden', 'true');
+      leaf.textContent = petals[Math.floor(Math.random() * petals.length)];
+
+      // Distribución en disco (más densa al centro) para que se lea como copa, no como nube dispersa
+      var angle = Math.random() * Math.PI * 2;
+      var r = Math.random();
+      var left = cx + Math.cos(angle) * r * rx;
+      var top  = cy + Math.sin(angle) * r * ry * 0.92;
+
+      var size = 15 + (1 - r) * 10 + Math.random() * 8; // las del centro un poco más grandes
+      var rot = (Math.random() * 34 - 17).toFixed(1);
+      var delay = baseDelay + i * step + Math.random() * 0.05;
+      lastDelay = delay;
+
+      leaf.style.left = left.toFixed(1) + '%';
+      leaf.style.top = top.toFixed(1) + '%';
+      leaf.style.fontSize = size.toFixed(0) + 'px';
+      leaf.style.setProperty('--rot', rot + 'deg');
+      leaf.style.animationDelay = delay.toFixed(2) + 's';
+      leaf.style.zIndex = String(2 + Math.round((1 - r) * 4)); // las centrales quedan por encima
+      scene.appendChild(leaf);
+    }
+    return Math.round((lastDelay + 0.6) * 1000) + 500; // última flor + margen de respiro
+  })();
+
+  /* ---------- Runaway "No" button ---------- */
+  var btnSi = document.getElementById('btnSi');
+  var btnNo = document.getElementById('btnNo');
+  var missMsg = document.getElementById('missMsg');
+
+  var phrases = [
+    '¡Uy, casi! 😄',
+    '¡Ni lo intentes! 😂',
+    'El botón "No" hoy no trabaja 🙈',
+    'Vas a tener que ser más rápido ⚡',
+    'Solo el "Sí" se deja atrapar 💕',
+    '¿Ves? Hasta el botón lo sabe ✨',
+    'Inténtalo otra vez… o no 😏',
+    'El "No" está de vacaciones 🏖️'
+  ];
+  var lastIdx = -1;
+  var missCount = 0;
+  var isFixed = false;
+  var accepted = false;
+  var confirmShown = false;
+
+  var confirmModal = document.getElementById('confirmModal');
+  var treeOverlay = document.getElementById('treeOverlay');
+  var confirmYesOverlay = document.getElementById('confirmYesOverlay');
+  var introOverlay = document.getElementById('introOverlay');
+  var modalYes = document.getElementById('modalYes');
+  var modalNo = document.getElementById('modalNo');
+
+  function paused(){
+    return accepted || !introOverlay.hidden || !confirmModal.hidden || !treeOverlay.hidden || !confirmYesOverlay.hidden;
+  }
+
+  function getBounds(){
+    var w = btnNo.offsetWidth, h = btnNo.offsetHeight;
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var rootStyle = getComputedStyle(document.documentElement);
+    var padTop = parseFloat(rootStyle.paddingTop) || 0;
+    var padBottom = parseFloat(rootStyle.paddingBottom) || 0;
+    var margin = 16;
+
+    // El "No" solo se mueve cerca de la tarjeta del mensaje, no por toda la pantalla
+    var roam = 44; // qué tan lejos del borde de la tarjeta puede alejarse
+    var cardRect = document.getElementById('card').getBoundingClientRect();
+
+    var minX = Math.max(margin, cardRect.left - roam);
+    var maxX = Math.min(vw - w - margin, cardRect.right + roam - w);
+    var minY = Math.max(padTop + margin, cardRect.top - roam);
+    var maxY = Math.min(vh - h - padBottom - margin, cardRect.bottom + roam - h);
+
+    if (minX > maxX){ var midX = (minX + maxX) / 2; minX = maxX = midX; }
+    if (minY > maxY){ var midY = (minY + maxY) / 2; minY = maxY = midY; }
+
+    return { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+  }
+
+  function activateFixed(){
+    if (isFixed) return;
+    var r = btnNo.getBoundingClientRect();
+    btnNo.style.position = 'fixed';
+    btnNo.style.left = r.left + 'px';
+    btnNo.style.top = r.top + 'px';
+    isFixed = true;
+  }
+
+  function place(){
+    var b = getBounds();
+    var siRect = btnSi.getBoundingClientRect();
+    var x, y, tries = 0, dist;
+    do {
+      x = b.minX + Math.random() * (b.maxX - b.minX);
+      y = b.minY + Math.random() * (b.maxY - b.minY);
+      dist = Math.hypot(
+        (x + btnNo.offsetWidth/2)  - (siRect.left + siRect.width/2),
+        (y + btnNo.offsetHeight/2) - (siRect.top  + siRect.height/2)
+      );
+      tries++;
+    } while (tries < 6 && dist < 100);
+    btnNo.style.left = x + 'px';
+    btnNo.style.top = y + 'px';
+  }
+
+  function bump(){
+    missCount++;
+    var pool = [];
+    for (var i = 0; i < phrases.length; i++) if (i !== lastIdx) pool.push(i);
+    var idx = pool[Math.floor(Math.random() * pool.length)];
+    lastIdx = idx;
+    missMsg.textContent = phrases[idx];
+    missMsg.classList.remove('pop');
+    void missMsg.offsetWidth;
+    missMsg.classList.add('pop');
+
+    var grow = 1 + Math.min(missCount, 6) * 0.035;
+    btnSi.style.setProperty('--grow', grow.toString());
+    var shrink = Math.max(0.72, 1 - Math.min(missCount, 8) * 0.035);
+    btnNo.style.setProperty('--shrink', shrink.toString());
+
+    if (missCount === 3 && !confirmShown){
+      confirmShown = true;
+      setTimeout(function(){ confirmModal.hidden = false; }, 650);
+    }
+  }
+
+  function dodge(e){
+    if (paused()) return;
+    if (e && e.cancelable) e.preventDefault();
+    activateFixed();
+    if (reduceMotion){
+      place();
+      bump();
+      return;
+    }
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        place();
+        bump();
+      });
+    });
+  }
+
+  btnNo.addEventListener('pointerdown', dodge, { passive: false });
+  btnNo.addEventListener('touchstart', dodge, { passive: false });
+  btnNo.addEventListener('click', dodge);
+  btnNo.addEventListener('mouseenter', dodge);
+  window.addEventListener('resize', function(){ if (isFixed && !paused()) place(); });
+
+  /* ---------- Huye cuando el dedo/cursor se acerca (sin llegar a tocarlo) ---------- */
+  var FLEE_RADIUS = window.innerWidth < 480 ? 90 : 120;
+  var lastFleeAt = 0;
+  var FLEE_COOLDOWN = 280; // ms, evita disparos repetidos por el mismo gesto
+
+  function maybeFleeFromPoint(px, py){
+    if (paused()) return;
+    var now = performance.now();
+    if (now - lastFleeAt < FLEE_COOLDOWN) return;
+    var r = btnNo.getBoundingClientRect();
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    if (Math.hypot(px - cx, py - cy) < FLEE_RADIUS){
+      lastFleeAt = now;
+      activateFixed();
+      place();
+      bump();
+    }
+  }
+
+  document.addEventListener('pointermove', function(e){
+    maybeFleeFromPoint(e.clientX, e.clientY);
+  }, { passive: true });
+
+  /* ---------- Deambula solo cada pocos segundos, aunque no lo toquen ---------- */
+  function scheduleWander(){
+    var delay = 2800 + Math.random() * 2400;
+    setTimeout(function(){
+      if (!paused() && performance.now() - lastFleeAt > 900){ // no interrumpe una persecución activa
+        activateFixed();
+        place();
+      }
+      scheduleWander();
+    }, delay);
+  }
+  if (!reduceMotion) scheduleWander();
+
+  /* ---------- Accept flow (botón "Sí" principal) ---------- */
+  var questionView = document.getElementById('questionView');
+  var successView = document.getElementById('successView');
+
+  btnSi.addEventListener('click', function(){
+    accepted = true;
+    questionView.hidden = true;
+    successView.hidden = false;
+    launchConfetti();
+  });
+
+  /* ---------- Modal de confirmación (aparece al 3er intento de decir "No") ---------- */
+  modalNo.addEventListener('click', function(){
+    // "No, no quiero decir que no" -> vuelve a la página principal y reinicia el juego
+    confirmModal.hidden = true;
+    missCount = 0;
+    confirmShown = false;
+    btnSi.style.setProperty('--grow', '1');
+    btnNo.style.setProperty('--shrink', '1');
+    missMsg.textContent = ' ';
+  });
+
+  modalYes.addEventListener('click', function(){
+    // Confirma que quería decir que no -> crece el árbol y luego el mensaje final
+    confirmModal.hidden = true;
+    treeOverlay.hidden = false;
+    setTimeout(function(){
+      treeOverlay.hidden = true;
+      accepted = true;
+      questionView.hidden = true;
+      confirmYesOverlay.hidden = false;
+      launchConfetti();
+    }, reduceMotion ? 250 : TREE_LEAF_DURATION_MS);
+  });
+
+  /* ---------- Cadena de mensajes extra ("Ver otro mensaje" -> "Siguiente") ---------- */
+  function wireMessageChain(step1, step2, step3, toStep2Btn, toStep3Btn){
+    toStep2Btn.addEventListener('click', function(){
+      step1.hidden = true;
+      step2.hidden = false;
+      launchConfetti(); // celebración también en "¡Felicitaciones!"
+    });
+    toStep3Btn.addEventListener('click', function(){
+      step2.hidden = true;
+      step3.hidden = false;
+    });
+  }
+
+  wireMessageChain(
+    document.getElementById('yesStep1'),
+    document.getElementById('yesStep2'),
+    document.getElementById('yesStep3'),
+    document.getElementById('btnStep2'),
+    document.getElementById('btnStep3')
+  );
+
+  wireMessageChain(
+    document.getElementById('successStep1'),
+    document.getElementById('successStep2'),
+    document.getElementById('successStep3'),
+    document.getElementById('btnSuccessMore'),
+    document.getElementById('btnSuccessNext')
+  );
+
+  /* ---------- Confetti burst ---------- */
+  function launchConfetti(){
+    var canvas = document.getElementById('confetti');
+    var ctx = canvas.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = canvas.width  = window.innerWidth  * dpr;
+    var h = canvas.height = window.innerHeight * dpr;
+    canvas.style.width  = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(dpr, dpr);
+
+    var colors = ['#ff4f81', '#ffb238', '#6c4cff', '#ff9ec2', '#ffd77a'];
+    var count = reduceMotion ? 0 : (window.innerWidth < 480 ? 90 : 150);
+    var particles = [];
+    for (var i = 0; i < count; i++){
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: -20 - Math.random() * window.innerHeight * 0.4,
+        s: 5 + Math.random() * 6,
+        vy: 2 + Math.random() * 2.6,
+        vx: (Math.random() - 0.5) * 2.2,
+        rot: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 10,
+        color: colors[i % colors.length],
+        shape: Math.random() > .5 ? 'rect' : 'circle',
+        life: 1
+      });
+    }
+
+    var start = performance.now();
+    function frame(t){
+      var elapsed = t - start;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      var alive = false;
+      for (var i = 0; i < particles.length; i++){
+        var p = particles[i];
+        if (p.y > window.innerHeight + 30 || elapsed > 4200) continue;
+        alive = true;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.02;
+        p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        if (p.shape === 'rect'){
+          ctx.fillRect(-p.s/2, -p.s/3, p.s, p.s * 0.66);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.s/2, 0, Math.PI*2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      if (alive && elapsed < 4500){
+        requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+    }
+    if (count > 0){
+      requestAnimationFrame(frame);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>
